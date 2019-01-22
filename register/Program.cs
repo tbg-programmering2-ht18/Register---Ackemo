@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace register
 {
@@ -12,11 +14,7 @@ namespace register
         static Dictionary<string, Animal> userAnimalDict = new Dictionary<string, Animal>();
         static void Main(string[] args)
         {
-            userPasswdDict.Add("Ackemo", "1337");
-            userPasswdDict.Add("Olle", "1234");
-            userPasswdDict.Add("Kajsa", "2341");
-
-            userAnimalDict.Add("Ackemo", new Animal("Horse", "Humpe", "RawrxD", false));
+            Setup();
 
             bool userLoggedIn = false;
             bool done = false;
@@ -67,6 +65,51 @@ namespace register
                     done = (!answer.ToLower().StartsWith("y"));
                 }
             }
+        }
+
+        private static void Setup()
+        {
+            String path = @"C:\Temp\";
+            if (Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            String urFilename = path + "user_register.txt";
+            if (File.Exists(urFilename))
+            {
+                FileStream f = File.Create(urFilename);
+                f.Close();
+                userPasswdDict.Add("Ackemo", "1337");
+                userPasswdDict.Add("Olle", "1234");
+                userPasswdDict.Add("Kajsa", "2341");
+
+                string jsonuserPasswd = JsonConvert.SerializeObject(userPasswdDict, Formatting.Indented);
+                File.WriteAllText(urFilename, jsonuserPasswd);
+            }
+            else
+            {
+                string json = File.ReadAllText(urFilename);
+                userPasswdDict = JsonConvert.DeserializeObject<Dictionary<String, String>>(json);
+            }
+
+            String arFilename = path + "animal_register.txt";
+            if (File.Exists(arFilename))
+            {
+                FileStream f = File.Create(arFilename);
+                f.Close();
+                userAnimalDict.Add("Ackemo", new Animal("Horse", "Humpe", "RawrxD", false));
+                userAnimalDict.Add("Olle", new Animal("Dragon", "Heindrich", "Arf", true));
+
+                string jsonUserAnimal = JsonConvert.SerializeObject(userAnimalDict, Formatting.Indented);
+                File.WriteAllText(arFilename, jsonUserAnimal);
+            }
+            else
+            {
+                string json = File.ReadAllText(arFilename);
+                userAnimalDict = JsonConvert.DeserializeObject<Dictionary<String, Animal>>(json);
+            }
+
         }
 
         private static string ReadPassword()
