@@ -70,13 +70,13 @@ namespace register
         private static void Setup()
         {
             String path = @"C:\Temp\";
-            if (Directory.Exists(path))
+            if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
 
             String urFilename = path + "user_register.txt";
-            if (File.Exists(urFilename))
+            if (!File.Exists(urFilename))
             {
                 FileStream f = File.Create(urFilename);
                 f.Close();
@@ -94,7 +94,7 @@ namespace register
             }
 
             String arFilename = path + "animal_register.txt";
-            if (File.Exists(arFilename))
+            if (!File.Exists(arFilename))
             {
                 FileStream f = File.Create(arFilename);
                 f.Close();
